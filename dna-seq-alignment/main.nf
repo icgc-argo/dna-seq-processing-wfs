@@ -237,7 +237,7 @@ gatkCollectOxogMetrics_params = [
 // Include all modules and pass params
 include { SongScoreDownload as dnld } from './wfpr_modules/github.com/icgc-argo/nextflow-data-processing-utility-tools/song-score-download@2.6.2/main.nf' params(download_params)
 include { seqDataToLaneBam as toLaneBam } from "./modules/raw.githubusercontent.com/icgc-argo/dna-seq-processing-tools/seq-data-to-lane-bam.0.3.3.0/tools/seq-data-to-lane-bam/seq-data-to-lane-bam.nf" params(seqDataToLaneBam_params)
-include {bwaMemAligner; getBwaSecondaryFiles} from "./modules/raw.githubusercontent.com/icgc-argo/dna-seq-processing-tools/bwa-mem-aligner.0.1.12.0/tools/bwa-mem-aligner/bwa-mem-aligner.nf" params(bwaMemAligner_params)
+include { bwaMemAligner; getBwaSecondaryFiles} from "./modules/raw.githubusercontent.com/icgc-argo/dna-seq-processing-tools/bwa-mem-aligner.0.1.13.0/tools/bwa-mem-aligner/bwa-mem-aligner.nf" params(bwaMemAligner_params)
 include { readGroupUBamQC as rgQC } from "./modules/raw.githubusercontent.com/icgc-argo/data-qc-tools-and-wfs/read-group-ubam-qc.0.1.2.0/tools/read-group-ubam-qc/read-group-ubam-qc.nf" params(readGroupUBamQC_params)
 include { bamMergeSortMarkdup as merSorMkdup; getMdupSecondaryFile } from "./modules/raw.githubusercontent.com/icgc-argo/dna-seq-processing-tools/bam-merge-sort-markdup.0.1.11.0/tools/bam-merge-sort-markdup/bam-merge-sort-markdup.nf" params(bamMergeSortMarkdup_params)
 include { alignedSeqQC; getAlignedQCSecondaryFiles } from "./modules/raw.githubusercontent.com/icgc-argo/data-qc-tools-and-wfs/aligned-seq-qc.0.2.2.1/tools/aligned-seq-qc/aligned-seq-qc" params(alignedSeqQC_params)
@@ -320,7 +320,7 @@ workflow DnaAln {
         // use scatter to run BWA alignment for each ubam in parallel
         bwaMemAligner(toLaneBam.out.lane_bams.flatten(), file(ref_genome_fa + '.gz'),
             Channel.fromPath(getBwaSecondaryFiles(ref_genome_fa + '.gz'), checkIfExists: true).collect(),
-            analysis_metadata, file(bwaMemAligner_params.tempdir), rgQC.out.count())  // just to run after rgQC
+            analysis_metadata, bwaMemAligner_params.tempdir, rgQC.out.count())  // just to run after rgQC
 
         // collect aligned lane bams for merge and markdup
         merSorMkdup(bwaMemAligner.out.aligned_bam.collect(), file(ref_genome_fa + '.gz'),

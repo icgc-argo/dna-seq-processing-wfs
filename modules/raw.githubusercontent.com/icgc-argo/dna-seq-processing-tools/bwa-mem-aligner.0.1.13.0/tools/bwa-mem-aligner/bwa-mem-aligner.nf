@@ -22,7 +22,7 @@
  */
 
 nextflow.enable.dsl=2
-version = '0.1.12.0'
+version = '0.1.13.0'
 
 params.input_bam = "tests/input/?????_?.lane.bam"
 params.aligned_lane_prefix = 'grch38-aligned'
@@ -56,7 +56,7 @@ process bwaMemAligner {
     path ref_genome_gz
     path ref_genome_gz_secondary_files
     path sequencing_experiment_analysis
-    path tempdir
+    val tempdir
     val dependencies
 
   output:
@@ -64,7 +64,7 @@ process bwaMemAligner {
 
   script:
     metadata = sequencing_experiment_analysis ? "-m " + sequencing_experiment_analysis : ""
-    arg_tempdir = tempdir.name != 'NO_DIR' ? "-t ${tempdir}": ""
+    arg_tempdir = tempdir != 'NO_DIR' ? "-t ${tempdir}": ""
     """
     bwa-mem-aligner.py \
       -i ${input_bam} \

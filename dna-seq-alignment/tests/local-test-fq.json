@@ -19,7 +19,6 @@
     "mem": 2
   },
   "bwaMemAligner": {
-    "tempdir": "/tmp",
     "cpus": 2,
     "mem": 2
   },
